@@ -20,7 +20,9 @@ export const Card: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: number]: boolean }>({});
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,8 +33,12 @@ export const Card: React.FC = () => {
         }
         const data: Product[] = await response.json();
         setProducts(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
@@ -51,17 +57,24 @@ export const Card: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await fetch(`https://fakestoreapi.com/products/${id}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `https://fakestoreapi.com/products/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to delete product");
         }
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product.id !== id)
         );
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     }
   };
@@ -80,15 +93,15 @@ export const Card: React.FC = () => {
   };
 
   const toggleDescription = (productId: number) => {
-    setExpandedDescriptions(prev => ({
+    setExpandedDescriptions((prev) => ({
       ...prev,
-      [productId]: !prev[productId]
+      [productId]: !prev[productId],
     }));
   };
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
-    return text.substr(0, maxLength) + '...';
+    return text.substr(0, maxLength) + "...";
   };
 
   return (
@@ -108,15 +121,15 @@ export const Card: React.FC = () => {
           <div className="text-left mb-4">
             <h1 className="font-bold text-lg mb-1">{item.title}</h1>
             <p className="text-sm text-gray-600 mb-2">
-              {expandedDescriptions[item.id] 
-                ? item.description 
+              {expandedDescriptions[item.id]
+                ? item.description
                 : truncateDescription(item.description, 100)}
               {item.description.length > 100 && (
-                <button 
-                  onClick={() => toggleDescription(item.id)} 
+                <button
+                  onClick={() => toggleDescription(item.id)}
                   className="text-blue-500 hover:underline ml-1"
                 >
-                  {expandedDescriptions[item.id] ? 'Less' : '...more'}
+                  {expandedDescriptions[item.id] ? "Less" : "...more"}
                 </button>
               )}
             </p>
@@ -135,13 +148,13 @@ export const Card: React.FC = () => {
             <div className="text-lg font-bold">${item.price.toFixed(2)}</div>
           </div>
           <div className="absolute bottom-4 right-4 flex flex-wrap space-x-2">
-            <button 
+            <button
               className="bg-blue-500 text-white p-2 rounded-full text-xs"
               onClick={() => handleEdit(item)}
             >
               <FaEdit />
             </button>
-            <button 
+            <button
               className="bg-green-500 text-white p-2 rounded-full text-xs"
               onClick={() => addToCart(item.id)}
             >

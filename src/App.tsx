@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 
 const AppContent: React.FC = () => {
   const { startLoading, stopLoading } = useLoading();
-  const { isFetching } = useQuery({
+  useQuery({
     queryKey: ['example'],
     queryFn: async () => {
       startLoading();

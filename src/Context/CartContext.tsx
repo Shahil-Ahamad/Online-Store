@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 interface CartContextType {
   cartCount: number;
-  addToCart: () => void;
+  addToCart: (id: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -21,6 +21,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {
